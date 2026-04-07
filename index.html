@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>給妳 ❤️</title>
+
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+    background: linear-gradient(to top, #ff9a9e, #fad0c4);
+    font-family: Arial;
+    text-align: center;
+}
+
+h1 {
+    margin-top: 50px;
+    color: white;
+}
+
+button {
+    font-size: 20px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#yes {
+    background: #ff4d6d;
+    color: white;
+}
+
+#no {
+    background: #555;
+    color: white;
+    position: absolute;
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+</style>
+</head>
+
+<body>
+
+<h1 id="text"></h1>
+
+<button id="yes" onclick="love()">喜歡 ❤️</button>
+<button id="no">不喜歡 😏</button>
+
+<!-- 音樂 -->
+<audio id="bgm" src="love.mp3"></audio>
+
+<canvas id="canvas"></canvas>
+
+<script>
+// 😈 不喜歡按鈕逃跑
+let noBtn = document.getElementById("no");
+noBtn.onmouseover = function() {
+    noBtn.style.left = Math.random() * (window.innerWidth - 100) + "px";
+    noBtn.style.top = Math.random() * (window.innerHeight - 50) + "px";
+};
+
+// ❤️ 初始打字動畫：其實我想說很久了… → 過一秒換成你喜歡我嗎？
+let introMsg = "其實我想說很久了...";
+let introIndex = 0;
+let textEl = document.getElementById("text");
+
+// 初始化按鈕隱藏
+document.getElementById("yes").style.display = "none";
+document.getElementById("no").style.display = "none";
+
+function typeIntro() {
+    if (introIndex < introMsg.length) {
+        textEl.innerHTML += introMsg.charAt(introIndex);
+        introIndex++;
+        setTimeout(typeIntro, 80);
+    } else {
+        setTimeout(()=>{
+            textEl.innerHTML = "你喜歡我嗎？❤️";
+            // 顯示按鈕
+            document.getElementById("yes").style.display = "inline-block";
+            document.getElementById("no").style.display = "inline-block";
+        }, 1000);
+    }
+}
+
+typeIntro();
+
+// 💓 點喜歡後打完整告白文字
+let messages = [
+    "雖然我們認識的時間不長，但你給了我一種很不一樣的感覺。",
+    "有你在的每一天都很幸福，跟你聊天時，我總是不自覺地笑出來。",
+    "現在的生活因為你的出現，醒來第一個想到的就是你，睡前最後想到的也是你。",
+    "我不知道我們能不能走到最後，但我想勇敢地嘗試看看。",
+    "無論如何，我都會一直陪著你 ❤️"
+];
+
+function playMusic() {
+    let music = document.getElementById("bgm");
+    music.loop = true;
+    music.volume = 0.6;
+    music.play();
+}
+
+function love() {
+    if(confirm("周旋，你願意當我女朋友嗎？❤️")) {
+        textEl.innerHTML = ""; // 清空文字
+        document.getElementById("yes").style.display = "none";
+        document.getElementById("no").style.display = "none";
+
+        playMusic();
+        startHearts();
+        typeMessage();
+    }
+}
+
+let i = 0;
+let j = 0;
+
+function typeMessage() {
+    if(i < messages.length) {
+        if(j < messages[i].length) {
+            textEl.innerHTML += messages[i].charAt(j);
+            j++;
+            setTimeout(typeMessage, 50);
+        } else {
+            textEl.innerHTML += "<br><br>";
+            j = 0;
+            i++;
+            setTimeout(typeMessage, 300);
+        }
+    }
+}
+
+// 💓 愛心動畫
+let canvas = document.getElementById("canvas");
+let ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let hearts = [];
+
+function createHeart() {
+    hearts.push({
+        x: Math.random() * canvas.width,
+        y: canvas.height,
+        size: Math.random() * 20 + 10,
+        speed: Math.random() * 3 + 2
+    });
+}
+
+function drawHearts() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    hearts.forEach((h, i) => {
+        ctx.font = h.size + "px Arial";
+        ctx.fillText("❤️", h.x, h.y);
+        h.y -= h.speed;
+
+        if(h.y < 0) hearts.splice(i, 1);
+    });
+}
+
+function startHearts() {
+    setInterval(createHeart, 200);
+    setInterval(drawHearts, 30);
+}
+</script>
+
+</body>
+</html>
